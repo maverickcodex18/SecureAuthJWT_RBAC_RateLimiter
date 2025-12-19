@@ -12,7 +12,7 @@
     *   **Build Command**: `pip install -r requirements.txt`
     *   **Start Command**: `uvicorn main:app --host 0.0.0.0 --port 10000`
 6.  Click **"Create Web Service"**.
-7.  Wait for it to deploy. Render will give you a URL (e.g., `https://secure-auth-gateway.onrender.com`).
+7.  Wait for it to deploy. Render will give you a URL (e.g., `[https://secure-auth-gateway.onrender.com](https://secureauthjwt-rbac-ratelimiter.onrender.com/)`).
 
 **✅ Success!** Your backend is now live on the cloud.
 
