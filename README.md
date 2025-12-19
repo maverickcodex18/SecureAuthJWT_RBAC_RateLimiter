@@ -15,7 +15,7 @@ A robust, security-focused API Gateway built with **FastAPI**. This project demo
 
 1.  **Clone the repository**:
     ```bash
-    git clone <repository_url>
+    git clone git@github.com:maverickcodex18/SecureAuthJWT_RBAC_RateLimiter.git
     cd SecureAuth_RBAC_RateLimiter_Gateway
     ```
 
