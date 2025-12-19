@@ -25,7 +25,7 @@
     Change `API_BASE` from localhost to your Render URL:
     ```javascript
     // const API_BASE = "http://127.0.0.1:8000"; // OLD (Local)
-    const API_BASE = "https://secure-auth-gateway.onrender.com"; // NEW (Cloud)
+    const API_BASE = "https://secureauthjwt-rbac-ratelimiter.onrender.com/"; // NEW (Cloud)
     ```
 2.  **Commit and Push** the change to GitHub.
 3.  Go to your GitHub Repository -> **Settings** -> **Pages**.
