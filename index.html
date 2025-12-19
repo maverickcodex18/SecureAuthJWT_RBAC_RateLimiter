@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceGuardAI - Secure Auth RBAC RateLimiter Gateway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1b1e;
+            color: #f7f8f7;
+        }
+
+        /* --- Uiverse Button Styles --- */
+        .button {
+            --primary: #45f3ff;
+            --neutral-1: #23242a;
+            --neutral-2: #1a1b1e;
+            --radius: 14px;
+            cursor: pointer;
+            border-radius: var(--radius);
+            border: none;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s ease;
+            min-width: 220px;
+            padding: 20px;
+            height: 68px;
+            font-weight: 600;
+            color: white;
+            overflow: hidden;
+        }
+
+        .button:hover {
+            transform: scale(1.02);
+        }
+
+        .button::before {
+            content: "";
+            inset: 2px;
+            position: absolute;
+            background: linear-gradient(to top, var(--neutral-1), var(--neutral-2));
+            border-radius: inherit;
+            z-index: 1;
+        }
+
+        .state {
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .state p {
+            display: flex;
+        }
+
+        .state p span {
+            display: block;
+            opacity: 1;
+        }
+
+        /* --- Uiverse Input Styles --- */
+        .inputbox {
+            position: relative;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .inputbox input {
+            position: relative;
+            width: 100%;
+            padding: 20px 10px 10px;
+            background: transparent;
+            outline: none;
+            border: none;
+            color: #45f3ff;
+            font-size: 1em;
+            letter-spacing: 0.05em;
+            transition: 0.5s;
+            z-index: 10;
+        }
+
+        .inputbox span {
+            position: absolute;
+            left: 0;
+            padding: 20px 10px 10px;
+            font-size: 1em;
+            color: #8f8f8f;
+            transition: 0.5s;
+            pointer-events: none;
+        }
+
+        .inputbox input:valid~span,
+        .inputbox input:focus~span {
+            color: #45f3ff;
+            transform: translateX(0px) translateY(-34px);
+            font-size: 0.85em;
+        }
+
+        .inputbox i {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background: #45f3ff;
+            border-radius: 4px;
+            transition: 0.5s;
+            pointer-events: none;
+            z-index: 9;
+        }
+
+        .inputbox input:valid~i,
+        .inputbox input:focus~i {
+            height: 100%;
+            background: rgba(69, 243, 255, 0.05);
+            border: 1px solid #45f3ff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .glass-card {
+            background: rgba(35, 36, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(69, 243, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div id="page-login" class="glass-card p-8 rounded-2xl w-full max-w-md shadow-2xl">
+        <h2 class="text-3xl font-bold mb-8 text-center text-[#45f3ff]">Secure Login</h2>
+        <form id="login-form" class="space-y-4">
+            <div class="inputbox">
+                <input type="text" id="username" required="required">
+                <span>Username</span><i></i>
+            </div>
+            <div class="inputbox">
+                <input type="password" id="password" required="required">
+                <span>Password</span><i></i>
+            </div>
+            <div class="flex justify-center pt-4">
+                <button type="submit" class="button">
+                    <div class="state state--default">
+                        <p>Login to Gateway</p>
+                    </div>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div id="page-dashboard" class="hidden glass-card p-8 rounded-2xl w-full max-w-lg shadow-2xl text-center">
+        <h2 class="text-2xl font-bold mb-2">Welcome Back</h2>
+        <p id="user-display" class="text-[#45f3ff] mb-8 italic"></p>
+        <div class="grid grid-cols-1 gap-6">
+            <button onclick="verifyAndShowSubmit()" class="button w-full">
+                <div class="state">
+                    <p>Submit New Form</p>
+                </div>
+            </button>
+            <button onclick="fetchResponses()" class="button w-full">
+                <div class="state">
+                    <p>View Saved Responses</p>
+                </div>
+            </button>
+            <button onclick="logout()" class="mt-4 text-sm text-gray-500 hover:text-red-400">Logout</button>
+        </div>
+    </div>
+
+    <div id="page-submit" class="hidden glass-card p-8 rounded-2xl w-full max-w-md shadow-2xl">
+        <button onclick="showPage('page-dashboard')" class="text-[#45f3ff] mb-4 text-sm">← Back</button>
+        <h2 class="text-2xl font-bold mb-8">Form Submission</h2>
+        <form id="data-form">
+            <div class="inputbox">
+                <input type="number" id="age" required="required">
+                <span>Age</span><i></i>
+            </div>
+            <div class="inputbox">
+                <input type="email" id="email" required="required">
+                <span>Email ID</span><i></i>
+            </div>
+            <div class="inputbox">
+                <input type="text" id="address" required="required">
+                <span>Address</span><i></i>
+            </div>
+            <div class="flex justify-center pt-4">
+                <button type="submit" class="button">
+                    <div class="state">
+                        <p>Upload Data</p>
+                    </div>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div id="page-responses" class="hidden glass-card p-8 rounded-2xl w-full max-w-2xl shadow-2xl">
+        <button onclick="showPage('page-dashboard')" class="text-[#45f3ff] mb-4 text-sm">← Back</button>
+        <h2 class="text-2xl font-bold mb-4">Saved Responses</h2>
+        <div id="responses-list" class="space-y-3 text-sm overflow-y-auto max-h-96">
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000";
+        let token = "";
+
+        // Helper: centralized error handling
+        async function handleResponse(response) {
+            if (response.status === 401) {
+                alert("Session Expired: Please Login Again");
+                logout();
+                return false;
+            }
+            if (response.status === 403) {
+                const data = await response.json();
+                alert(data.detail || "Access Denied: You don't have permission.");
+                return false;
+            }
+            if (response.status === 429) {
+                alert("Rate Limit Exceeded: 5 requests per 2 minutes!");
+                return false;
+            }
+            return true;
+        }
+
+        // Navigation Logic
+        function showPage(pageId) {
+            document.querySelectorAll('body > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+
+        // 1. LOGIN LOGIC (auth.py)
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('username', document.getElementById('username').value);
+            formData.append('password', document.getElementById('password').value);
+
+            try {
+                const response = await fetch(`${API_BASE}/authorize`, { method: 'POST', body: formData });
+                const data = await response.json();
+
+                if (response.ok) {
+                    token = data.access_token;
+
+                    // Fetch real user details including Role
+                    try {
+                        const meResponse = await fetch(`${API_BASE}/me`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        const meData = await meResponse.json();
+                        document.getElementById('user-display').innerText = `Role: ${meData.role || 'Authorized'}`;
+                    } catch (e) { console.error("Could not fetch details"); }
+
+                    showPage('page-dashboard');
+                } else {
+                    alert(data.detail || "Login Failed");
+                }
+            } catch (err) { alert("Server connection error"); }
+        });
+
+        // 2. CHECK ACCESS & SHOW SUBMIT PAGE
+        async function verifyAndShowSubmit() {
+            try {
+                const response = await fetch(`${API_BASE}/formAccess`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!await handleResponse(response)) return;
+
+                if (response.ok) {
+                    showPage('page-submit');
+                } else {
+                    alert("Access Denied: Only Users can access the submission form.");
+                }
+            } catch (err) { alert("Server Check Failed"); }
+        }
+
+        // 3. SUBMIT LOGIC (forms.py + Rate Limiter)
+        document.getElementById('data-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                age: document.getElementById('age').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/submitForm`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!await handleResponse(response)) return;
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert("Success: Form submitted!");
+                    showPage('page-dashboard');
+                } else {
+                    alert(data.detail || "Submission denied");
+                }
+            } catch (err) { alert("Submission error"); }
+        });
+
+        // 3. VIEW RESPONSES (Admin Only)
+        async function fetchResponses() {
+            try {
+                const response = await fetch(`${API_BASE}/responses`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!await handleResponse(response)) return;
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const list = document.getElementById('responses-list');
+                    // data is a dictionary { "user": {...}, "admin": {...} }, so filter for values
+                    const items = Object.values(data);
+
+                    list.innerHTML = items.map(res => `
+                        <div class="p-3 border-b border-gray-700 bg-black/20 rounded">
+                            <p><strong>Age:</strong> ${res.age}</p>
+                            <p><strong>Email:</strong> ${res.email}</p>
+                            <p class="text-xs text-gray-400"><strong>Address:</strong> ${res.address}</p>
+                        </div>
+                    `).join('');
+                    showPage('page-responses');
+                } else {
+                    alert("Access Denied: Admin role required.");
+                }
+            } catch (err) { alert("Fetch error"); }
+        }
+
+        function logout() { token = ""; showPage('page-login'); }
+    </script>
+</body>
+
+</html>
