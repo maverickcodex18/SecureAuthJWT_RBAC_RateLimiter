@@ -75,7 +75,7 @@ The `SlowAPI` limiter, configured in `limiter.py` and attached via decorators (`
 
 ### 4. Authentication (Layer 3)
 The `formAccess` dependency creates a chain reaction. First, it calls `getCurrentUser`.
-*   **Check**: The `OAuth2PasswordBearer` extracts the token. `jwt.decode` verifies the signature using `SECRET_KEY` and checks the `exp` (expiration) claim.
+*   **Check**: The `OAuth2PasswordBearer` extracts the token. `jwt.decode` verifies the signature using `SECRET_KEY` and checks the `exp` (expiration) claim (2 minutes).
 *   **Outcome**:
     *   **Fail**: `401 Unauthorized` (if token is missing, tampered, or expired).
     *   **Pass**: The `User` object (username, role) is retrieved from memory/DB.

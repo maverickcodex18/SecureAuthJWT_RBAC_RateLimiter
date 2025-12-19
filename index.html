@@ -318,7 +318,8 @@
         // 3. VIEW RESPONSES (Admin Only)
         async function fetchResponses() {
             try {
-                const response = await fetch(`${API_BASE}/responses`, {
+                // Add timestamp to prevent browser caching of 403 responses
+                const response = await fetch(`${API_BASE}/responses?t=${Date.now()}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 

@@ -4,7 +4,7 @@ A robust, security-focused API Gateway built with **FastAPI**. This project demo
 
 ## 🚀 Key Features
 
-*   **Authentication**: OAuth2 Password Flow with stateless **JWT** (JSON Web Tokens).
+*   **Authentication**: OAuth2 Password Flow with stateless **JWT** (JSON Web Tokens). **Tokens expire in 2 minutes** to enforce security.
 *   **Password Security**: Industry-standard **Argon2** hashing via `pwdlib`.
 *   **Access Control (RBAC)**: Granular permission checks for **Admin** and **User** roles.
 *   **DoS Protection**: Rate Limiting using **SlowAPI** (Token Bucket algorithm).

@@ -17,5 +17,8 @@ def responsesAccess(user : CurrentUser = Depends(getCurrentUser)):
 # Protected by 'responsesAccess' ensuring only Admins can invoke this
 @router.get("/responses")
 @limiter.limit("5/2minute") # Rate limit for Admin actions as well
-def getResponses(request: Request, user : CurrentUser = Depends(responsesAccess)):
+def getResponses(request: Request, user : CurrentUser = Depends(getCurrentUser)):
+    # Check Role usage manually HERE so Rate Limiter accounts for the request first
+    if user.role != "admin":
+         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Only Admin Can Access This",headers={"WWW-Authenticate":"Bearer"})
     return mockFormDetails

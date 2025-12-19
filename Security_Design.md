@@ -17,7 +17,7 @@ The system implements a standardized **OAuth2 Password Flow** with Bearer Token 
 *   **Format**: JSON Web Token (JWT) signed with `Generic (HS256)` HMAC-SHA256.
 *   **Payload Claims**:
     *   `sub` (or custom `username`): Identity of the user.
-    *   `exp`: Expiration timestamp (set to 5 minutes to force frequent re-auth).
+    *   `exp`: Expiration timestamp (set to 2 minutes to force frequent re-auth).
 *   **Transport**: Tokens are passed in the `Authorization` header: `Bearer <token>`.
 
 ---
