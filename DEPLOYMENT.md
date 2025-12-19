@@ -1,13 +1,5 @@
 # Deployment Guide
 
-You asked if you can deploy this project to GitHub. The short answer is:
-*   **Yes, for the Frontend** (`index.html`) -> **GitHub Pages**.
-*   **No, for the Backend** (FastAPI/Python) -> **GitHub cannot run Python servers**.
-
-You need a cloud provider for the backend. We recommend **Render.com** (it has a great free tier for FastAPI).
-
----
-
 ## 🚀 Part 1: Deploy Backend (Render)
 
 1.  **Push your code to GitHub** (You already did this!).
