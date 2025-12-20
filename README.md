@@ -47,6 +47,7 @@ The server will start at `http://127.0.0.1:8000`.
 *   **Swagger UI**: Visit `http://127.0.0.1:8000/docs` for interactive API testing.
 *   **System Design**: See [System_Security_Design.md](System_Security_Design.md) for architectural details.
 *   **Request Flow**: See [Client_Server_Flow.md](Client_Server_Flow.md) for a visual breakdown of the request lifecycle.
+*   **Tech Stack**: See [TECH_STACK.md](TECH_STACK.md) for a detailed list of tools and libraries used.
 *   **Learning Resources**: See [Learning.md](Learning.md) for tutorials on the tech stack.
 
 ## 📂 Project Structure
