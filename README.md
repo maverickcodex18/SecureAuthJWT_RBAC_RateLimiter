@@ -72,4 +72,4 @@ The server will start at `http://127.0.0.1:8000`.
 ## Deployment Link
 
 (SecureAuth RBAC RateLimiter Gateway)
-Live Demo Link : https://github.com/maverickcodex18/SecureAuthJWT_RBAC_RateLimiter/deployments/github-pages
+Live Demo Link : https://maverickcodex18.github.io/SecureAuthJWT_RBAC_RateLimiter/
